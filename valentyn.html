@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Budeš můj Valentýn?</title>
+  <style>
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(circle at top, #ffe1ec, #fff);
+      overflow:hidden;
+    }
+    .card{
+      width:min(520px, 92vw);
+      background:white; border-radius:24px; padding:28px 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.12);
+      text-align:center;
+      position:relative;
+    }
+    h1{ margin:0 0 10px; font-size:28px; }
+    p{ margin:0 0 18px; opacity:.8; }
+    .btns{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+    button{
+      border:0; padding:12px 18px; border-radius:999px;
+      font-size:16px; cursor:pointer; transition:.15s transform;
+    }
+    button:active{ transform: scale(.98); }
+    #yes{ background:#ff2d55; color:white; }
+    #no{
+      background:#f1f1f4; color:#222; position:relative;
+    }
+    #result{
+      margin-top:16px; font-size:22px; font-weight:700;
+      min-height:32px;
+    }
+    .hearts{
+      position:absolute; inset:0; pointer-events:none;
+    }
+    .heart{
+      position:absolute; font-size:22px; opacity:.85;
+      animation: floatUp 2.2s ease-in forwards;
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(0) scale(1); opacity:.9; }
+      to{ transform: translateY(-160px) scale(1.35); opacity:0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>💌 Budeš můj Valentýn?</h1>
+    <p>Vyber si (správně 😇)</p>
+
+    <div class="btns">
+      <button id="yes">ANO 💖</button>
+      <button id="no">NE 🙃</button>
+    </div>
+
+    <div id="result"></div>
+    <div class="hearts" id="hearts"></div>
+  </div>
+
+  <script>
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
+    const result = document.getElementById("result");
+    const hearts = document.getElementById("hearts");
+
+    function popHearts(count=14){
+      for(let i=0;i<count;i++){
+        const s = document.createElement("div");
+        s.className = "heart";
+        s.textContent = Math.random() > 0.5 ? "💖" : "💘";
+        s.style.left = (20 + Math.random()*60) + "%";
+        s.style.top = (60 + Math.random()*10) + "%";
+        s.style.animationDelay = (Math.random()*0.25) + "s";
+        hearts.appendChild(s);
+        setTimeout(()=>s.remove(), 2400);
+      }
+    }
+
+    yes.addEventListener("click", () => {
+      result.textContent = "JEEEEEEJ 🥰💖";
+      popHearts(20);
+      no.style.display = "none";
+      yes.textContent = "ANO 💖 (správně)";
+    });
+
+    // “NE” se bude přesouvat pryč a nikdy nebude “hotovo”
+    function moveNoButton(){
+      const padding = 12;
+      const card = document.querySelector(".card").getBoundingClientRect();
+      const btn = no.getBoundingClientRect();
+
+      const maxX = card.width - btn.width - padding*2;
+      const maxY = card.height - btn.height - padding*2;
+
+      const x = padding + Math.random()*Math.max(0, maxX);
+      const y = padding + Math.random()*Math.max(0, maxY);
+
+      // pozicuj uvnitř karty
+      no.style.position = "absolute";
+      no.style.left = x + "px";
+      no.style.top = y + "px";
+    }
+
+    // uhne když na něj najede myší (PC)
+    no.addEventListener("mouseenter", moveNoButton);
+
+    // na mobilu uhne při dotyku
+    no.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, {passive:false});
+
+    // když se někdy trefí a klikne, stejně se jen přesune 😄
+    no.addEventListener("click", (e) => {
+      e.preventDefault();
+      moveNoButton();
+      result.textContent = "Zkus to ještě jednou 😇";
+    });
+
+    // aby nezačínal překrývat tlačítka v různých velikostech
+    setTimeout(()=>{ no.style.position="relative"; }, 0);
+  </script>
+</body>
+</html>
