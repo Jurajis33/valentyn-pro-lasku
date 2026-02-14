@@ -1,1 +1,1 @@
-# valentyn-pro-lasku
+# valentyn-pro-adelku-moji
